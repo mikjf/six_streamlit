@@ -6,6 +6,7 @@ from pmdarima.arima import auto_arima
 
 def run_arima(merchant, merchant_name, seasonality = 12, D_val =1, pred_months = 12):
   # merchant is a df created from row of a data frame we read
+  merchant = merchant.set_index('Month')
   merchant['month_index'] = merchant.index.month
   
   # fit the model
