@@ -1,4 +1,4 @@
-# standard imports
+# STANDARD IMPORTS
 import pandas as pd
 import numpy as np
 from numpy import array
@@ -8,41 +8,42 @@ import math
 import sklearn.metrics
 from sklearn.metrics import mean_squared_error
 
-# matplotlib
+# MATPLOTLIB
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# streamlit
+# STREAMLIT
 import streamlit as st
 
-# warnings
-from warnings import catch_warnings
-from warnings import filterwarnings
-
-# plotly
+# PLOTLY
 import plotly.express as px
 import plotly.graph_objects as go
 
-# arima
+# ARIMA
 from pmdarima.arima import auto_arima
 
-# arima py files
-from get_sum import get_sum
-import auto_arima_single
-from auto_arima_single import run_arima_get_rmse
-from run_arima_tune_get_pred import run_arima
-
-# ets
+# ETS
 from statsmodels.tsa.api import ExponentialSmoothing
 from multiprocessing import cpu_count
 from joblib import Parallel
 from joblib import delayed
 
-# prophet
+# PROPHET
 from prophet import Prophet
 
-# file uploader
+# PY FILES
+from get_sum import get_sum
+import auto_arima_single
+from auto_arima_single import run_arima_get_rmse
+from run_arima_tune_get_pred import run_arima
+
+# PY FILES PROPHET
+from auto_single_prophet import run_prophet_get_rmse
+
+###################################################################################
+
+# FILE UPLOADER
 uploaded_file = st.file_uploader('Upload a file', type=['csv', 'xlsx'])
 if uploaded_file is not None:
     try:
@@ -52,22 +53,52 @@ if uploaded_file is not None:
             df = pd.read_excel(uploaded_file)
         except:
             df = pd.DataFrame()
-    st.table(df)
+    st.table(df.head())
 
-# ???
+# DATE SELECTION
 sum_file = 'sum_all_merch'
 start_month = '08-2020'
 
-# output prediction
+###################################################################################
+
+# GET_SUM
 try:
     data = get_sum(start_month, df, file_name = sum_file)
-    st.table(data)
+    # show get_sum
+    #st.table(data)
 except:
     pass
 
-# download prediction
-with open(sum_file+'.csv') as f:
-   st.download_button('Download CSV SUM', f)
+# DOWNLOAD FINAL CSV (txt for now and needs to go at the end)
+#with open(sum_file+'.csv') as f:
+#   st.download_button('Download CSV SUM', f)
+
+# MODELS
+models = ['arima', 'ETS', 'prophet']
+best_rmse = []
+
+# RUN ARIMA
+print(data)
+#try:
+best_rmse.append(run_arima_get_rmse(merchant = data, merchant_name = 'total', train_test_split = 21, seasonality = 12, D_val =1))
+best_rmse.append(run_prophet_get_rmse(merchant = data))
+#except:
+#    pass
+
+print(best_rmse)
+
+# show best_rmse
+if bool(best_rmse):
+    st.write(best_rmse)
+else:
+    pass
+
+print(best_rmse)
+
+
+#best_rmse.append(run_arima_get_rmse(merchant = data, merchant_name = data.columns.value, train_test_split = 21, seasonality = 12, D_val =1))
+#best_rmse.append(run and get rmse from ETS)
+#best_rmse.append(run and get rmse from prophet)
 
 # LAYOUT
 

@@ -33,6 +33,7 @@ def run_arima_get_rmse(merchant, merchant_name, train_test_split = 21, seasonali
   # train_test_split - number of months for train
   # seasonality - what should the m be, based on the data
   # D_val - starting value for differencing the seasonal part of the time series
+  merchant = merchant.set_index('Month')
   merchant['month_index'] = merchant.index.month
   
   #train test split, since arima runs on min 21, we used that for train, and whatever is left for test
@@ -76,7 +77,7 @@ def run_arima_get_rmse(merchant, merchant_name, train_test_split = 21, seasonali
                                   return_conf_int=True,
                                   exogenous=test[['month_index']])
   
-  rmse = calc_error(test[merchant_name].values, fitted.values,method = 'RMSE')
+  rmse = calc_error(test[merchant_name].values, fitted,method = 'RMSE')
   #norm_rmse = calc_error(test[merchant_name].values, fitted.values,method = 'RMSE', normalized = 'range')
   
   return rmse
