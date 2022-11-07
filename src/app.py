@@ -43,27 +43,31 @@ from joblib import delayed
 from prophet import Prophet
 
 # file uploader
-uploaded_file = st.file_uploader("Choose a file")
+uploaded_file = st.file_uploader('Upload a file', type=['csv', 'xlsx'])
 if uploaded_file is not None:
-    # To read file as bytes:
-    bytes_data = uploaded_file.getvalue()
-    st.write(bytes_data)
+    try:
+        df = pd.read_csv(uploaded_file, error_bad_lines=True, warn_bad_lines=False)
+    except:
+        try:
+            df = pd.read_excel(uploaded_file)
+        except:
+            df = pd.DataFrame()
+    st.table(df)
 
-    # To convert to a string based IO:
-    stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
-    st.write(stringio)
+# ???
+sum_file = 'sum_all_merch'
+start_month = '08-2020'
 
-    # To read file as string:
-    string_data = stringio.read()
-    st.write(string_data)
+# output prediction
+try:
+    data = get_sum(start_month, df, file_name = sum_file)
+    st.table(data)
+except:
+    pass
 
-    # Can be used wherever a "file-like" object is accepted:
-    dataframe = pd.read_excel(uploaded_file,)
-    st.write(dataframe)
-
-# data source and output dir
-source_file_path = ''
-output_file_path = ''
+# download prediction
+with open(sum_file+'.csv') as f:
+   st.download_button('Download CSV SUM', f)
 
 # LAYOUT
 
@@ -90,13 +94,6 @@ st.header("Header")
 fig1 = go.Figure()
 fig1.add_traces(
     go.Scatter(
-        x=,
-        y=,
-        mode=,
-        name=,
-        marker=,
-        text=,
-        hovertemplate=
     )
 )
 

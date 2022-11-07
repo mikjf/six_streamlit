@@ -12,3 +12,5 @@ prophet
 statsmodels
 multiprocess
 joblib
+xlrd
+openpyxl==3.0.10
