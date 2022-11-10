@@ -9,6 +9,10 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+# Removing logging issues
+import logging, sys
+logging.disable(sys.maxsize)
+
 # Model performance evaluation
 #from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error
 
@@ -40,10 +44,11 @@ def run_prophet_get_rmse(merchant, train_test_split = 21):
   # merchant is a df created from row of a data frame we read
   # train_test_split - number of months for train
   
-  data = pd.DataFrame(merchant.values)
+  data = merchant.copy(deep=True)
 # Change variable names
   my_input = ['ds', 'y'] 
   data.columns = my_input
+  data['ds'] = data['ds'].dt.strftime('%Y-%m')
   
   #train test split, since arima runs on min 21, we used that for train, and whatever is left for test
   start_date = data.ds[0]

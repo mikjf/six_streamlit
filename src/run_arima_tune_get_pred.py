@@ -30,25 +30,34 @@ def run_arima(merchant, merchant_name, seasonality = 12, D_val =1, pred_months =
                    error_action='ignore',  
                    suppress_warnings=True, 
                    stepwise=True)
-                           
+
+  fitted, fitted_CI = model_final.predict_in_sample(return_conf_int=True, exogenous=merchant[['month_index']])
+
+  fitted_df = pd.DataFrame({})
+  fitted_df['timestamp'] = merchant.index
+  fitted_df['fitted'] = fitted.values
+  fitted_df['lower_bound'] = [item[0] for item in fitted_CI]
+  fitted_df['upper_bound'] = [item[1] for item in fitted_CI]
+  fitted_df = fitted_df.set_index('timestamp')
+
   # 12 month prediction
   
   # time frame for forecasting
-  forecast_df = pd.DataFrame({"month_index":pd.date_range(merchant.index[-1], periods = pred_months, freq='MS').month},
-                    index = pd.date_range(merchant.index[-1] + pd.DateOffset(months=1), periods = pred_months, freq='MS'))
-  
+  #!!!!!!!!!!!!!!!!!'2022-10' MANUAL, SHOUOLD BE AUTOMATIC
+  dates = pd.Series(pd.period_range('2022-10', freq="M", periods=pred_months))
+  #################
+
   prediction, confint_pred = model_final.predict(n_periods=pred_months, 
                                         return_conf_int=True,
-                                        exogenous=forecast_df[['month_index']])
-  
-  # save data
-                                        
-  CI_lower = [item[0] for item in confint_pred]
-  CI_upper = [item[1] for item in confint_pred]
-  #CI_width = CI_upper.values - CI_lower.values
-  
-  prediction.to_csv(file_path+'data_predictions.csv')
-  CI_lower.to_csv(file_path+'CI_lower.csv')
-  CI_upper.to_csv(file_path+'CI_upper.csv')
-  
-  return prediction, confint_pred
+                                        exogenous = dates.dt.month)
+
+  predictions_df = pd.DataFrame({})
+  predictions_df['timestamp'] = dates
+  predictions_df['predicted'] = prediction.values
+  predictions_df['lower_bound'] = [item[0] for item in confint_pred]
+  predictions_df['upper_bound'] = [item[1] for item in confint_pred]
+  predictions_df = predictions_df.set_index('timestamp')
+
+  return predictions_df, fitted_df
+
+

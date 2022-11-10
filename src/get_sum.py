@@ -1,9 +1,11 @@
 import pandas as pd
 
-def get_sum(start_month, data, file_name):
+def get_sum(source_file_path, output_file_path, file_name, start_month):
+  data = pd.read_csv(source_file_path)
   data = data.set_index('Merchant Name')
   dates = pd.Series(pd.period_range(start_month, freq="M", periods=len(data.columns)))
+  #pd.date_range(start=start_month, periods=len(data.columns), freq="M")
   data.columns = dates
-  #data.sum(axis=0).to_csv(file_name+'.csv', header=False)
-  data_get_sum = pd.DataFrame({'Month': dates, 'total': data.sum(axis=0).values})
-  return data_get_sum
+  data_frame = pd.DataFrame({'Month':dates,'total':data.sum(axis=0).values})
+  data_frame.to_csv(output_file_path+file_name+'.csv', header=False)
+  return data_frame
