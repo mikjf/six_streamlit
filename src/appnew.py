@@ -64,76 +64,9 @@ if uploaded_file is not None:
             df = pd.DataFrame()
     st.table(df.head())
 
+print('Checking downloaded file:')
+print(uploaded_file)
+
 # DATE SELECTION
 sum_file = 'sum_all_merch'
 start_month = '08-2020'
-
-###################################################################################
-
-# GET_SUM
-try:
-    data = get_sum(start_month, df, file_name = sum_file)
-    # show get_sum
-    #st.table(data)
-except:
-    pass
-
-# DOWNLOAD FINAL CSV (txt for now and needs to go at the end)
-#with open(sum_file+'.csv') as f:
-#   st.download_button('Download CSV SUM', f)
-
-# MODELS
-models = ['arima', 'ETS', 'prophet']
-best_rmse = []
-
-# RUN ARIMA
-print(data)
-#try:
-best_rmse.append(run_arima_get_rmse(merchant = data, merchant_name = 'total', train_test_split = 21, seasonality = 12, D_val =1))
-best_rmse.append(run_prophet_get_rmse(merchant = data))
-#except:
-#    pass
-
-print(best_rmse)
-
-# show best_rmse
-if bool(best_rmse):
-    st.write(best_rmse)
-else:
-    pass
-
-print(best_rmse)
-
-
-#best_rmse.append(run_arima_get_rmse(merchant = data, merchant_name = data.columns.value, train_test_split = 21, seasonality = 12, D_val =1))
-#best_rmse.append(run and get rmse from ETS)
-#best_rmse.append(run and get rmse from prophet)
-
-# LAYOUT
-
-# widget sidebar checkbox to show dataframe
-if st.sidebar.checkbox("Show data source"):
-    st.header("Header2")
-    st.subheader("Subheader:")
-    st.dataframe(data=data_source.head())
-    #st.table(data=data_source)
-
-# add title and header
-st.title("Title")
-st.header("Header")
-
-# setting up columns
-#left_column, middle_column, right_column = st.columns([3, 1, 1])
-
-# FIG 1
-
-# first figure title
-st.header("Header")
-
-# creating fig 1
-fig1 = go.Figure()
-fig1.add_traces(
-    go.Scatter(
-    )
-)
-
