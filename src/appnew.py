@@ -52,8 +52,17 @@ import streamlit as st
 
 ###################################################################################
 
+#HEADER
+st.title('SIX Time Series Prediction')
+#st.header('X')
+#st.subheader('X')
+#st.text('X')
+#st.code('for i in range(8): foo()')
+
+###################################################################################
+
 # FILE UPLOADER
-uploaded_file = st.file_uploader('Upload a file', type=['csv', 'xlsx'])
+uploaded_file = st.file_uploader('Upload dataset to run analysis', type=['csv', 'xlsx'])
 if uploaded_file is not None:
     try:
         df = pd.read_csv(uploaded_file, error_bad_lines=True, warn_bad_lines=False)
@@ -62,11 +71,24 @@ if uploaded_file is not None:
             df = pd.read_excel(uploaded_file)
         except:
             df = pd.DataFrame()
-    st.table(df.head())
+    df = df.set_index(df.columns[0])
+    start_month = '08-2020'
+    df_dates = pd.Series(pd.period_range(start_month, freq="M", periods=len(df.columns)))
+    df.columns = df_dates
+    st.text('Data successfully uploaded. ' + str(len(df.axes[0])) + ' merchants x ' + str(len(df.axes[1])) + ' months.\n'
+            + 'Period from ' + str(df.columns[0]) + ' to ' + str(df.columns[-1]) + '.')
+    #print(df.head())
+    #print(df_dates)
+    st.text(df.info)
+    st.text(df_dates)
 
-print('Checking downloaded file:')
-print(uploaded_file)
+###################################################################################
 
-# DATE SELECTION
-sum_file = 'sum_all_merch'
-start_month = '08-2020'
+# GET_SUM DISPLAY
+
+if uploaded_file is not None:
+    st.text(type(df_dates))
+    df_dates = df_dates.astype(str)
+    df_dates = pd.to_datetime(df_dates).dt.strftime('%Y-%m')
+    data_frame = pd.DataFrame({'Month': df_dates,'total': df.sum(axis=0).values})
+    st.table(data_frame)
