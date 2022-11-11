@@ -44,6 +44,8 @@ from ETS_Function import predictions
 from auto_single_prophet import run_prophet_get_rmse
 from run_prophet_tune_get_pred import run_prophet
 
+#PY FILES PLOT
+from Visualization import plot_simulation
 
 
 ###################################################################################
@@ -91,25 +93,24 @@ print('The best model is {}'.format(best))
 elif best == 'ETS':
     df_predictions, df_fitted = predictions(data, cfg)
 elif best == 'PROPHET':
-    df_predictions = run_prophet(data, pred_months = 12)"""
 
-##testing prophet output
-df_predictions_pr, df_fitted_pr = run_prophet(data, pred_months=12)
-df_fitted_pr.to_csv(output+str(data.Month.max())+'_Prophet_fit.csv')
-df_predictions_pr.to_csv(output+str(data.Month.max())+'_Prophet_pred.csv')
+    df_predictions = run_prophet(data, pred_months = 12)"""
 
 ##testing arima output
 predictions_df_ar, fitted_df_ar = run_arima(data, 'total', seasonality=12, D_val=1, pred_months=12)
-predictions_df_ar.to_csv(output+str(data.Month.max())+'_arima_pred.csv')
-fitted_df_ar.to_csv(output+str(data.Month.max())+'_arima_fit.csv')
+#predictions_df_ar.to_csv(output+str(data.Month.max())+'_arima_pred.csv')
+#fitted_df_ar.to_csv(output+str(data.Month.max())+'_arima_fit.csv')
 
 ##testing ETS output
 df_predictions_ets, df_fitted_ets = predictions(data, cfg)
-df_predictions_ets.to_csv(output+str(data.Month.max())+'_ETS_pred.csv')
-df_fitted_ets.to_csv(output+str(data.Month.max())+'_ETS_fit.csv')
+#df_predictions_ets.to_csv(output+str(data.Month.max())+'_ETS_pred.csv')
+#df_fitted_ets.to_csv(output+str(data.Month.max())+'_ETS_fit.csv')
 
-print('done')
+##testing prophet output
+df_predictions_pr, df_fitted_pr = run_prophet(data, pred_months=12)
+#df_fitted_pr.to_csv(output+str(data.Month.max())+'_Prophet_fit.csv')
+#df_predictions_pr.to_csv(output+str(data.Month.max())+'_Prophet_pred.csv')
 
-
-#####
+#Plotting
+plot_simulation(data, predictions_df_ar, fitted_df_ar,  df_fitted_ets, df_predictions_ets, df_predictions_pr, df_fitted_pr)
 

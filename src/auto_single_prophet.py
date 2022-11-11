@@ -53,7 +53,7 @@ def run_prophet_get_rmse(merchant, train_test_split = 21):
   #train test split, since arima runs on min 21, we used that for train, and whatever is left for test
   start_date = data.ds[0]
   end_date = data.ds[len(data.ds)-1]
-  train_end_date = data.ds[train_test_split]
+  train_end_date = data.ds[train_test_split-1]
   train = data[data['ds'] <= train_end_date]
   test = data[data['ds'] > train_end_date]
   
@@ -62,9 +62,8 @@ def run_prophet_get_rmse(merchant, train_test_split = 21):
   
   # Fit the model on the training dataset
   model.fit(train)
-  
+
   results = model.predict(pd.DataFrame({'ds':test.ds.values}))
-  
   fitted = results.yhat
   
   rmse = calc_error(test.y.values, fitted.values,method = 'RMSE')

@@ -45,6 +45,9 @@ from ETS_Function import predictions
 from auto_single_prophet import run_prophet_get_rmse
 from run_prophet_tune_get_pred import run_prophet
 
+#PY FILES PLOT
+from Visualization import plot_simulation
+
 ###################################################################################
 
 # STREAMLIT
@@ -206,6 +209,12 @@ if uploaded_file is not None:
     #df_predictions_pr.to_csv(output + str(data.Month.max()) + '_Prophet_pred.csv')
 
 ###################################################################################
+
+# PLOTTING
+    plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ets, df_predictions_ets,
+                    df_predictions_pr, df_fitted_pr)
+
+    ###################################################################################
 
 # RUN COMPLETED
 
