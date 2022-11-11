@@ -103,7 +103,7 @@ if uploaded_file is not None:
         progress_bar.progress(perc_completed+1)
 
     # file uploader success
-    st.success('Dataset uploaded successfully.')
+    st.success('Dataset uploaded successfully 🎉')
 
 ###################################################################################
 
@@ -114,8 +114,14 @@ if uploaded_file is not None:
     df2 = df2.set_index(df2.columns[0])
     df2_dates = pd.Series(pd.period_range(start_month, freq="M", periods=len(df2.columns)))
     df2.columns = df2_dates
-    st.text(str(len(df2.axes[0])) + ' merchants x ' + str(len(df2.axes[1])) + ' months.\n'
-            + 'Period from ' + str(df2.columns[0]) + ' to ' + str(df2.columns[-1]) + '.')
+    #st.text(str(len(df2.axes[0])) + ' merchants x ' + str(len(df2.axes[1])) + ' months.\n'
+    #        + 'Period from ' + str(df2.columns[0]) + ' to ' + str(df2.columns[-1]) + '.')
+
+    # df summary with 3 columns layout
+    c1, c2, c3 = st.columns(3)
+    c1.text('🛍️ ' + str(len(df2.axes[0])) + ' merchants')
+    c2.text('⌛ ' + str(len(df2.axes[1])) + ' months')
+    c3.text('📆 ' + str(df2.columns[0]) + ' to ' + str(df2.columns[-1]))
 
 ###################################################################################
 
@@ -124,8 +130,8 @@ if uploaded_file is not None:
 if uploaded_file is not None:
     data = get_sum(df, 'sum', start_month)
     # prints differently on streamlit
-    st.table(data)
-    st.dataframe(data)
+    #st.table(data)
+    #st.dataframe(data)
     print(data)
     print()
 
@@ -134,28 +140,31 @@ if uploaded_file is not None:
 # GET_RMSE
 
 if uploaded_file is not None:
-    models = ['ARIMA', 'ETS', 'PROPHET']
-    rmse_models = dict.fromkeys(models)
+    with st.spinner('Running ARIMA, ETS and Prophet models...'):
+        models = ['ARIMA', 'ETS', 'PROPHET']
+        rmse_models = dict.fromkeys(models)
 
-    # RUN ARIMA get RMSE
-    rmse_models['ARIMA'] = (run_arima_get_rmse(merchant=data, merchant_name='total', train_test_split=21, seasonality=12, D_val=1))
+        # RUN ARIMA get RMSE
+        rmse_models['ARIMA'] = (run_arima_get_rmse(merchant=data, merchant_name='total', train_test_split=21, seasonality=12, D_val=1))
 
-    # RUN ETS get RMSE
-    cfg, rmse_models['ETS'] = run_ETS_get_rmse(data)
+        # RUN ETS get RMSE
+        cfg, rmse_models['ETS'] = run_ETS_get_rmse(data)
 
-    # RUN PROPHET get RMSE
-    rmse_models['PROPHET'] = (run_prophet_get_rmse(merchant=data, train_test_split=21))
+        # RUN PROPHET get RMSE
+        rmse_models['PROPHET'] = (run_prophet_get_rmse(merchant=data, train_test_split=21))
 
-    # python console print check
-    print('List of RMSE per model')
-    print(rmse_models)
-    print()
+        # python console print check
+        print('List of RMSE per model')
+        print(rmse_models)
+        print()
 
-    # best model depending on the smallest error
-    best = min(rmse_models, key=rmse_models.get)
+        # best model depending on the smallest error
+        best = min(rmse_models, key=rmse_models.get)
 
-    # python console print check
-    print('The best model is {}'.format(best))
+        # python console print check
+        print('The best model is {}'.format(best))
+
+        st.success("Which model has the lowest RMSE? Let's find out! 🥇")
 
 ###################################################################################
 
