@@ -17,6 +17,10 @@ def plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ETS, df_pre
     df_fitted_pr.index = pd.Series(pd.date_range(str(df_fitted_pr.index[0]), freq="M", periods=len(df_fitted_pr.index)))
     #figs
     fig, ax = plt.subplots(3,1, figsize=(20, 28))
+    #plt.style.use("dark_background")
+    #plt.style.context(('dark_background'))
+    #plt.figure(facecolor='#262730')
+    #ax.set_facecolor('#262730')
 
     ax[0].grid(b=True, which='major', color='k', linestyle='-', alpha=0.5)
     ax[0].grid(b=True, which='minor', color='k', linestyle='-', alpha=0.1)
@@ -72,6 +76,7 @@ def plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ETS, df_pre
 
     fig.tight_layout()
     plt.show()
+    plt.gcf()
 
 
 

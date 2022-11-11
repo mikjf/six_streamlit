@@ -166,6 +166,7 @@ if uploaded_file is not None:
 
         # python console print check
         print('The best model is {}'.format(best))
+        print()
 
         st.success("Which model has the lowest RMSE? Let's find out! 🥇")
 
@@ -208,11 +209,26 @@ if uploaded_file is not None:
     #df_fitted_pr.to_csv(output + str(data.Month.max()) + '_Prophet_fit.csv')
     #df_predictions_pr.to_csv(output + str(data.Month.max()) + '_Prophet_pred.csv')
 
+    # python console print check
+    print('All models 12 months prediction completed')
+    print()
+
 ###################################################################################
 
 # PLOTTING
-    plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ets, df_predictions_ets,
+
+    # creating matplotlib plots
+    plotting = plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ets, df_predictions_ets,
                     df_predictions_pr, df_fitted_pr)
+
+    # importing plots to streamlit
+    st.pyplot(plt.gcf())
+    # added plt.gcf() at the end of visualization.py line 79
+    # changed color line 22 and 23
+
+    # python console print check
+    print('All models plotting completed')
+    print()
 
     ###################################################################################
 
