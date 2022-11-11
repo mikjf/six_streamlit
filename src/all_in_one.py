@@ -108,6 +108,8 @@ df_predictions_ets, df_fitted_ets = predictions(data, cfg)
 df_predictions_ets.to_csv(output+str(data.Month.max())+'_ETS_pred.csv')
 df_fitted_ets.to_csv(output+str(data.Month.max())+'_ETS_fit.csv')
 
+print('done')
+
 
 #####
 
