@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib.dates as mdates
 import seaborn as sns
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 def plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ETS, df_pred_ETS, df_predictions_pr, df_fitted_pr):
     #DATA -> Month to dateTime
@@ -9,13 +11,97 @@ def plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ETS, df_pre
     #AR -> Index to DateTime
     predictions_df_ar.index = pd.Series(pd.date_range(str(predictions_df_ar.index[0]), freq="M", periods=len(predictions_df_ar.index)))
     fitted_df_ar.index = pd.Series(pd.date_range(str(fitted_df_ar.index[0]), freq="M", periods=len(fitted_df_ar.index)))
+    #fitted_df_ar['timestamp'] = pd.to_datetime(fitted_df_ar['timestamp'])
+    #predictions_df_ar['timestamp'] = pd.to_datetime(predictions_df_ar['timestamp'])
     #ETS -> Index to DateTime
     df_fitted_ETS.index = pd.Series(pd.date_range(str(df_fitted_ETS.index[0]), freq="M", periods=len(df_fitted_ETS.index)))
     df_pred_ETS.index = pd.Series(pd.date_range(str(df_pred_ETS.index[0]), freq="M", periods=len(df_pred_ETS.index)))
+    #df_fitted_ETS['timestamp'] = pd.to_datetime(df_fitted_ETS['timestamp'])
+    #df_pred_ETS['timestamp'] = pd.to_datetime(df_pred_ETS['timestamp'])
     #PR -> Index to DateTime
     df_predictions_pr.index = pd.Series(pd.date_range(str(df_predictions_pr.index[0]), freq="M", periods=len(df_predictions_pr.index)))
     df_fitted_pr.index = pd.Series(pd.date_range(str(df_fitted_pr.index[0]), freq="M", periods=len(df_fitted_pr.index)))
-    #figs
+    #df_fitted_pr['timestamp'] = pd.to_datetime(df_fitted_pr['timestamp'])
+    #df_predictions_pr['timestamp'] = pd.to_datetime(df_predictions_pr['timestamp'])
+
+    #CREATING SUBPLOTS
+    fig = make_subplots(rows=3, cols=1, subplot_titles=('ARIMA model', 'ETS model', 'PROPHET model'))
+
+    #ARIMA PLOT
+    #fig = go.Figure()
+    fig.add_traces(
+        [go.Scatter(x=data["Month"], y=data['total'], mode='lines+markers', marker=dict(size=10, color='white'),
+                    name='Data', legendgroup = '1',
+                    #hovertemplate='%{y:.0f}'
+                    ),
+         go.Scatter(x=fitted_df_ar.index, y=fitted_df_ar['fitted'], mode='lines',
+                    marker=dict(size=10, color='lightgreen' ), name='Fitted', legendgroup = '1',
+                    #hovertemplate='%{y:.0f}'
+                    ),
+         go.Scatter(x=predictions_df_ar.index, y=predictions_df_ar.predicted, mode='lines+markers',
+                    marker=dict(size=10, color='lightgreen', symbol='triangle-right'), name='Prediction', legendgroup = '1',
+                    #hovertemplate='%{y:.0f}'
+                    ),
+         go.Scatter(x=predictions_df_ar.index, y=predictions_df_ar['lower_bound'], mode='lines',
+              marker=dict(size=1, color='rgba(0,0,0,0)', ), showlegend=False, name='95% CI', legendgroup = '1',
+                    #hovertemplate='%{y:.0f}'
+                    ),
+         go.Scatter(x=predictions_df_ar.index, y=predictions_df_ar['upper_bound'], mode='lines',
+               marker=dict(size=1, color='rgba(0,0,0,0)', ), fill='tonexty', opacity=0.1,
+               fillcolor='rgba(204,255,153,0.3)', name='95% CI', legendgroup = '1',
+                    hovertemplate='%{y:.0f}'
+                    )
+         ], rows=1, cols=1,
+    )
+    #fig.write_html('arima_plotly.html')
+    #fig.show()
+
+    #ETS PLOT
+    #fig2 = go.Figure()
+    fig.add_traces(
+        [go.Scatter(x=data["Month"], y=data['total'], mode='lines+markers', marker=dict(size=10, color='white'),
+                    name='Data', legendgroup = '2'),
+         go.Scatter(x=df_fitted_ETS.index, y=df_fitted_ETS['fitted'], mode='lines',
+                    marker=dict(size=10, color='lightblue' ), name='Fitted', legendgroup = '2'),
+         go.Scatter(x=df_pred_ETS.index, y=df_pred_ETS.predicted, mode='lines+markers',
+                    marker=dict(size=10, color='lightblue', symbol='triangle-right'), name='Prediction', legendgroup = '2'),
+         go.Scatter(x=df_pred_ETS.index, y=df_pred_ETS['lower_bound'], mode='lines',
+              marker=dict(size=1, color='rgba(0,0,0,0)', ), showlegend=False, name='95% CI', legendgroup = '2'),
+         go.Scatter(x=df_pred_ETS.index, y=df_pred_ETS['upper_bound'], mode='lines',
+               marker=dict(size=1, color='rgba(0,0,0,0)', ), fill='tonexty', opacity=0.1,
+               fillcolor='rgba(153,255,255,0.3)', name='95% CI', legendgroup = '2')
+         ], rows=2, cols=1
+    )
+    #fig2.write_html('ets_plotly.html')
+    #fig2.show()
+
+    #PROPHET PLOT
+    #fig3 = go.Figure()
+    fig.add_traces(
+        [go.Scatter(x=data["Month"], y=data['total'], mode='lines+markers', marker=dict(size=10, color='white'),
+                    name='Data', legendgroup = '3'),
+         go.Scatter(x=df_fitted_pr.index, y=df_fitted_pr['fitted'], mode='lines',
+                    marker=dict(size=10, color='yellow', ), name='Fitted', legendgroup = '3'),
+         go.Scatter(x=df_predictions_pr.index, y=df_predictions_pr.predicted, mode='lines+markers',
+                    marker=dict(size=10, color='yellow', symbol='triangle-right'), name='Prediction', legendgroup = '3'),
+         go.Scatter(x=df_predictions_pr.index, y=df_predictions_pr['lower_bound'], mode='lines',
+              marker=dict(size=1, color='rgba(0,0,0,0)', ), showlegend=False, name='95% CI', legendgroup = '3'),
+         go.Scatter(x=df_predictions_pr.index, y=df_predictions_pr['upper_bound'], mode='lines',
+               marker=dict(size=1, color='rgba(0,0,0,0)', ), fill='tonexty', opacity=0.1,
+               fillcolor='rgba(255,255,153,0.3)', name='95% CI', legendgroup = '3')
+         ], rows=3, cols=1,
+    )
+    #fig3.write_html('prophet_plotly.html')
+    #fig3.show()
+
+    fig.update_layout(autosize=False, height=1200, plot_bgcolor="#262730", legend_tracegroupgap=320)
+    fig.update_xaxes(dtick="M3", tickangle=0, tickformat="%b\n%Y")
+    fig.update_layout(hovermode="x unified")
+    #fig.update_layout(calendar="gregorian")
+
+    return fig
+
+    '''#figs
     fig, ax = plt.subplots(3,1, figsize=(20, 28))
     #plt.style.use("dark_background")
     #plt.style.context(('dark_background'))
@@ -76,7 +162,7 @@ def plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ETS, df_pre
 
     fig.tight_layout()
     plt.show()
-    plt.gcf()
+    plt.gcf()'''
 
 
 

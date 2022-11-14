@@ -16,6 +16,7 @@ import seaborn as sns
 # PLOTLY
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly import subplots
 
 # ARIMA
 from pmdarima.arima import auto_arima
@@ -55,14 +56,19 @@ import streamlit as st
 
 ###################################################################################
 
+# PAGE SETUP
+
+st.set_page_config(page_title="SIX Time Series Prediction", # page title, displayed on the window/tab bar
+                   page_icon="🚀", # favicon: icon that shows on the window/tab bar (tip: you can use emojis)
+                   layout="wide", # use full width of the page
+                   #menu_items={'About': "Description of the page."}
+                   )
+
+###################################################################################
+
 # HEADER
 
 st.title('SIX Time Series Prediction')
-#st.header('X')
-#st.subheader('X')
-#st.text('X')
-#st.code('for i in range(8): foo()')
-#st.write('testtest')
 
 ###################################################################################
 
@@ -218,11 +224,20 @@ if uploaded_file is not None:
 # PLOTTING
 
     # creating matplotlib plots
-    plotting = plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ets, df_predictions_ets,
+    fig = plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ets, df_predictions_ets,
                     df_predictions_pr, df_fitted_pr)
 
+    # winner sentence
+    st.text('The RMSE for ' + list(rmse_models.keys())[0] + ' is ' + str(round(list(rmse_models.values())[0])))
+    st.text('The RMSE for ' + list(rmse_models.keys())[1] + ' is ' + str(round(list(rmse_models.values())[1])))
+    st.text('The RMSE for ' + list(rmse_models.keys())[2] + ' is ' + str(round(list(rmse_models.values())[2])))
+    st.subheader('And the model with the lower RMSE is... {} 🏆'.format(best))
+    st.subheader('Prediction details by model ⬇️')
+
     # importing plots to streamlit
-    st.pyplot(plt.gcf())
+    st.plotly_chart(fig, use_container_width=True)
+    #st.plotly_chart(fig2)
+    #st.plotly_chart(fig3)
     # added plt.gcf() at the end of visualization.py line 79
     # changed color line 22 and 23
 
@@ -230,7 +245,7 @@ if uploaded_file is not None:
     print('All models plotting completed')
     print()
 
-    ###################################################################################
+###################################################################################
 
 # RUN COMPLETED
 
