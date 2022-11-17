@@ -97,6 +97,7 @@ def plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ETS, df_pre
     fig.update_layout(autosize=False, height=1200, plot_bgcolor="#262730", legend_tracegroupgap=320)
     fig.update_xaxes(dtick="M3", tickangle=0, tickformat="%b\n%Y")
     fig.update_layout(hovermode="x unified")
+    fig.update_yaxes(visible=False)
     #fig.update_layout(calendar="gregorian")
 
     return fig
