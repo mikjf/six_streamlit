@@ -71,11 +71,6 @@ st.set_page_config(page_title="SIX Time Series Prediction", # page title, displa
 st.title('SIX Time Series Prediction')
 st.write("NOTE: The dataset we worked on had already been anonymised since the start of the project. You can run the streamlit app by uploading the [mock dataset](https://share.streamlit.io/mesmith027/streamlit_webapps/main/MC_pi/streamlit_app.py) provided. To know everything about the project itself please refer to this [GitHub](https://share.streamlit.io/mesmith027/streamlit_webapps/main/MC_pi/streamlit_app.py).")
 
-# FILE PATHS - YOU NEED TO CHANGE THIS
-source = 'data/raw/Time_Series_Merchants_Transactions_Anonymized.csv'
-output = 'data/processed/'
-start_month = '08-2020'
-
 ###################################################################################
 
 # START MONTH
