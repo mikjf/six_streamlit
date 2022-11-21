@@ -69,7 +69,7 @@ st.set_page_config(page_title="SIX Time Series Prediction", # page title, displa
 # HEADER AND DISCLAIMER
 
 st.title('SIX Time Series Prediction')
-st.write("NOTE: The dataset we worked on had already been anonymised since the start of the project. You can run the streamlit app by uploading the [mock dataset](https://share.streamlit.io/mesmith027/streamlit_webapps/main/MC_pi/streamlit_app.py) provided. To know everything about the project itself please refer to this [GitHub](https://share.streamlit.io/mesmith027/streamlit_webapps/main/MC_pi/streamlit_app.py).")
+st.write("NOTE: The dataset we worked on had already been anonymised since the start of the project. You can run the streamlit app by uploading the [mock dataset](https://github.com/mikjf/six_streamlit/blob/main/mock_data/Mock_Time_Series_Merchants_Transactions_Anonymized.csv) provided. To know everything about the project itself please refer to this [GitHub](https://github.com/mikjf/six_streamlit/blob/main/mock_data/Mock_Time_Series_Merchants_Transactions_Anonymized.csv).")
 
 ###################################################################################
 
