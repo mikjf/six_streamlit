@@ -1,5 +1,5 @@
+# IMPORTS
 from statsmodels.tsa.api import ExponentialSmoothing
-#from statsmodels.tsa.statespace.exponential_smoothing import ExponentialSmoothing
 from math import sqrt
 from multiprocessing import cpu_count
 from joblib import Parallel
@@ -13,6 +13,10 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings('ignore')
 
+###################################################################################
+
+# EXP_SMOOTHING_FORECAST FUNCTION
+
 def exp_smoothing_forecast(history, config):
     t, d, s, p, b, r, sm = config
     history = array(history)
@@ -21,14 +25,23 @@ def exp_smoothing_forecast(history, config):
     yhat = model_fit.predict(len(history), len(history))
     return yhat[0]
 
-# See if we can do the same with the rest of models
+###################################################################################
+
+# TRAIN_TEST_SPLIT FUNCTION
+
 def train_test_split(data, n_test):
     return data[:-n_test], data[-n_test:]
 
-# Straightforward function to mesure RMSE
+###################################################################################
+
+# MEASURE_RMSE FUNCTION
+
 def measure_rmse(actual, predicted):
     return sqrt(mean_squared_error(actual, predicted))
 
+###################################################################################
+
+# MEASURE_RMSE FUNCTION
 
 def walk_forward_validation(data, n_test, cfg):
     predictions = list()
@@ -41,7 +54,10 @@ def walk_forward_validation(data, n_test, cfg):
     error = measure_rmse(test, predictions)
     return error
 
-#Scoring the model
+###################################################################################
+
+# SCORE_MODEL FUNCTION
+
 def score_model(data, n_test, cfg, debug=False): #
     result = None
     key = str(cfg)
@@ -49,32 +65,38 @@ def score_model(data, n_test, cfg, debug=False): #
         result = walk_forward_validation(data, n_test, cfg)
     else:
         try:
-            #with catch_warnings():
-                #filterwarnings("ignore")
             result = walk_forward_validation(data, n_test, cfg)
         except:
             error = None
-    #if result is not None:
-        #print(' > Model[%s] %.3f' % (key, result))
     return (key, result)
 
-# grid-search --> getting the model with the lowest error
+###################################################################################
+
+# GRID_SEARCH FUNCTION (looking for the model with the lowest error)
+
 def grid_search(data, cfg_list, n_test, parallel=False):
     scores = None
     if parallel:
-        #execute configs in parallel
+        # executes configs in parallel
         executor = Parallel(n_jobs=cpu_count(), backend='multiprocessing')
         tasks = (delayed(score_model)(data, n_test, cfg) for cfg in cfg_list)
         scores = executor(tasks)
     else:
         scores = [score_model(data, n_test, cfg) for cfg in cfg_list]
-    #remove empty results
+    # removes empty results
     scores = [r for r in scores if r[1] != None]
     # sort configs by error, asc
     scores.sort(key=lambda tup: tup[1])
     return scores
 
-# Configurations to train
+###################################################################################
+
+# CONFIGURATIONS TO TRAIN
+
+###################################################################################
+
+# EXP_SMOOTHING_CONFIGS FUNCTION
+
 def exp_smoothing_configs(seasonal=[0 ,4, 6, 8, 12]):
     models = list()
     # define config lists
@@ -97,7 +119,10 @@ def exp_smoothing_configs(seasonal=[0 ,4, 6, 8, 12]):
                                 models.append(cfg)
     return models
 
-# Extracting the best (lowest error) configuration as a list to run the model --- > it returns the "RMSE"
+###################################################################################
+
+# RUN_ETS_GET_RMSE FUNCTION (extracting lowest error -> returns RMSE)
+
 def run_ETS_get_rmse(df, n_test=5):
     data = df.copy(deep=True)
     data = data.set_index('Month')
@@ -105,9 +130,7 @@ def run_ETS_get_rmse(df, n_test=5):
     list_s = "][' "
     cfg_list = exp_smoothing_configs()
     scores = grid_search(data, cfg_list, n_test)
-    #print('done')
     for cfg, error in scores[:1]:
-        #print(cfg, 'RMSE = ', error)
         for i in list_s:
             cfg = cfg.replace(i, '')
         cfg1= cfg.split(',')
@@ -124,7 +147,10 @@ def run_ETS_get_rmse(df, n_test=5):
             continue
     return cfg1, error
 
-# modeling + fitting
+###################################################################################
+
+# MODELING_ETS FUNCTION (modeling and fitting)
+
 def modeling_ETS(data, cfg):
     data = data.copy(deep=True)
     data = data.set_index('Month')
@@ -134,16 +160,22 @@ def modeling_ETS(data, cfg):
     fit = model.fit(smoothing_level=sm, remove_bias=b) # use_boxcox=bx
     return model, fit
 
-#Drawing the boundaries for plotting
+###################################################################################
+
+# BOUNDARIES FUNCTION (drawing the boundaries for plotting)
+
 def boundaries(simulations):
     simulations_tr = simulations.transpose(copy=True)
     simulations_tr_summary = simulations_tr.describe(percentiles=[.025, .5, .975])
     simulations_summary = simulations_tr_summary.transpose(copy=True)
     y1 = simulations_summary['2.5%']
     y2 = simulations_summary['97.5%']
-    #x = simulations_summary.index
     CI_ETS = pd.concat([y1, y2], axis=1)
     return CI_ETS
+
+###################################################################################
+
+# PREDICTIONS FUNCTION
 
 def predictions(data, cfg, num_sim=12):
   _, fit = modeling_ETS(data, cfg)
@@ -172,7 +204,10 @@ def predictions(data, cfg, num_sim=12):
 
   return df_predictions, df_fitted
 
-# Plotting the ETS model
+###################################################################################
+
+# PLOT_SIMULATION FUNCTION
+
 def plot_simulation(data, cfg):
     t = input('Select the name of the graph: ')
     p = input('Select the name of the forecasting label: ')
@@ -186,7 +221,7 @@ def plot_simulation(data, cfg):
         title=t,
         label='Sum of all Merchants'
     )
-    ax.set_ylabel("Nº of Transactions ")  # Nº of Transactions
+    ax.set_ylabel("Nº of Transactions ")
     ax.set_xlabel("Year")  # Year
     fit1.fittedvalues.plot(ax=ax, style="--", color="green")
     ax.fill_between(x, y1, y2, alpha=0.2, color='g', animated=True)

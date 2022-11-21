@@ -16,6 +16,7 @@ import seaborn as sns
 # PLOTLY
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly import subplots
 
 # ARIMA
 from pmdarima.arima import auto_arima
@@ -45,6 +46,9 @@ from ETS_Function import predictions
 from auto_single_prophet import run_prophet_get_rmse
 from run_prophet_tune_get_pred import run_prophet
 
+# PY FILES PLOT
+from Visualization import plot_simulation
+
 ###################################################################################
 
 # STREAMLIT
@@ -52,88 +56,168 @@ import streamlit as st
 
 ###################################################################################
 
+# PAGE SETUP
+
+st.set_page_config(page_title="SIX Time Series Prediction", # page title, displayed on the window/tab bar
+                   page_icon="🚀", # favicon: icon that shows on the window/tab bar (tip: you can use emojis)
+                   layout="wide", # use full width of the page
+                   #menu_items={'About': "Description of the page."}
+                   )
+
+###################################################################################
+
+# HEADER AND DISCLAIMER
+
+st.title('SIX Time Series Prediction')
+st.write("NOTE: The dataset we worked on had already been anonymised since the start of the project. You can run the streamlit app by uploading the [mock dataset](https://share.streamlit.io/mesmith027/streamlit_webapps/main/MC_pi/streamlit_app.py) provided. To know everything about the project itself please refer to this [GitHub](https://share.streamlit.io/mesmith027/streamlit_webapps/main/MC_pi/streamlit_app.py).")
+
+# FILE PATHS - YOU NEED TO CHANGE THIS
+source = 'data/raw/Time_Series_Merchants_Transactions_Anonymized.csv'
+output = 'data/processed/'
+start_month = '08-2020'
+
+###################################################################################
+
+# START MONTH
+
+start_month = '08-2020'
+
+###################################################################################
+
 # FILE UPLOADER
-uploaded_file = st.file_uploader('Upload a file', type=['csv', 'xlsx'])
+
+# file uploader part 1
+uploaded_file = st.file_uploader('Upload dataset to run analysis', type=['csv', 'xlsx'])
+
+# progress_bar color
+st.markdown(
+    """
+    <style>
+        .stProgress > div > div > div > div {
+            background-image: linear-gradient(to right, #ff4b4b , #4bb543);
+        }
+    </style>""",
+    unsafe_allow_html=True,
+)
+
+# progress_bar setup
+progress_bar = st.progress(0)
+
+# file uploader part 2
 if uploaded_file is not None:
     try:
-        df = pd.read_csv(uploaded_file, error_bad_lines=True, warn_bad_lines=False)
+        df = pd.read_csv(uploaded_file) #, error_bad_lines=True, warn_bad_lines=False)
     except:
         try:
             df = pd.read_excel(uploaded_file)
         except:
             df = pd.DataFrame()
-    st.table(df.head())
 
-# DATE SELECTION
-sum_file = 'sum_all_merch'
-start_month = '08-2020'
+    # progress_bar animation
+    for perc_completed in range(100):
+        progress_bar.progress(perc_completed+1)
+
+    # file uploader success
+    st.success('Dataset uploaded successfully 🎉')
 
 ###################################################################################
 
-# GET_SUM
-try:
-    data = get_sum(start_month, df, file_name = sum_file)
-    # show get_sum
-    #st.table(data)
-except:
-    pass
+# DATASET INFO
 
-# DOWNLOAD FINAL CSV (txt for now and needs to go at the end)
-#with open(sum_file+'.csv') as f:
-#   st.download_button('Download CSV SUM', f)
+if uploaded_file is not None:
+    df2 = df.copy()
+    df2 = df2.set_index(df2.columns[0])
+    df2_dates = pd.Series(pd.period_range(start_month, freq="M", periods=len(df2.columns)))
+    df2.columns = df2_dates
+    c1, c2, c3 = st.columns(3)
+    c1.text('🛍️ ' + str(len(df2.axes[0])) + ' merchants')
+    c2.text('⌛ ' + str(len(df2.axes[1])) + ' months')
+    c3.text('📆 ' + str(df2.columns[0]) + ' to ' + str(df2.columns[-1]))
 
-# MODELS
-models = ['arima', 'ETS', 'prophet']
-best_rmse = []
+###################################################################################
 
-# RUN ARIMA
-print(data)
-#try:
-best_rmse.append(run_arima_get_rmse(merchant = data, merchant_name = 'total', train_test_split = 21, seasonality = 12, D_val =1))
-best_rmse.append(run_prophet_get_rmse(merchant = data))
-#except:
-#    pass
+# GET_SUM DISPLAY
 
-print(best_rmse)
+if uploaded_file is not None:
+    data = get_sum(df, 'sum', start_month)
+    print(data)
+    print()
 
-# show best_rmse
-if bool(best_rmse):
-    st.write(best_rmse)
-else:
-    pass
+###################################################################################
 
-print(best_rmse)
+# GET_RMSE
 
+if uploaded_file is not None:
+    with st.spinner('Running ARIMA, ETS and Prophet models...'):
+        models = ['ARIMA', 'ETS', 'PROPHET']
+        rmse_models = dict.fromkeys(models)
 
-#best_rmse.append(run_arima_get_rmse(merchant = data, merchant_name = data.columns.value, train_test_split = 21, seasonality = 12, D_val =1))
-#best_rmse.append(run and get rmse from ETS)
-#best_rmse.append(run and get rmse from prophet)
+        # RUN ARIMA get RMSE
+        rmse_models['ARIMA'] = (run_arima_get_rmse(merchant=data, merchant_name='total', train_test_split=21, seasonality=12, D_val=1))
 
-# LAYOUT
+        # RUN ETS get RMSE
+        cfg, rmse_models['ETS'] = run_ETS_get_rmse(data)
 
-# widget sidebar checkbox to show dataframe
-if st.sidebar.checkbox("Show data source"):
-    st.header("Header2")
-    st.subheader("Subheader:")
-    st.dataframe(data=data_source.head())
-    #st.table(data=data_source)
+        # RUN PROPHET get RMSE
+        rmse_models['PROPHET'] = (run_prophet_get_rmse(merchant=data, train_test_split=21))
 
-# add title and header
-st.title("Title")
-st.header("Header")
+        # python console print check
+        print('List of RMSE per model')
+        print(rmse_models)
+        print()
 
-# setting up columns
-#left_column, middle_column, right_column = st.columns([3, 1, 1])
+        # best model depending on the smallest error
+        best = min(rmse_models, key=rmse_models.get)
 
-# FIG 1
+        # python console print check
+        print('The best model is {}'.format(best))
+        print()
 
-# first figure title
-st.header("Header")
+        st.success("Which model has the lowest RMSE? Let's find out! 🥇")
 
-# creating fig 1
-fig1 = go.Figure()
-fig1.add_traces(
-    go.Scatter(
-    )
-)
+###################################################################################
 
+# ALL MODELS 12M PREDICTIONS
+
+if uploaded_file is not None:
+
+    # ARIMA output
+    predictions_df_ar, fitted_df_ar = run_arima(data, 'total', seasonality=12, D_val=1, pred_months=12)
+
+    # ETS output
+    df_predictions_ets, df_fitted_ets = predictions(data, cfg)
+
+    # PROPHET output
+    df_predictions_pr, df_fitted_pr = run_prophet(data, pred_months=12)
+
+    # python console print check
+    print('All models 12 months prediction completed')
+    print()
+
+###################################################################################
+
+# PLOTTING
+
+    # creating matplotlib plots
+    fig = plot_simulation(data, predictions_df_ar, fitted_df_ar, df_fitted_ets, df_predictions_ets,
+                    df_predictions_pr, df_fitted_pr)
+
+    # winner sentence
+    st.text('The RMSE for ' + list(rmse_models.keys())[0] + ' is ' + str(round(list(rmse_models.values())[0])))
+    st.text('The RMSE for ' + list(rmse_models.keys())[1] + ' is ' + str(round(list(rmse_models.values())[1])))
+    st.text('The RMSE for ' + list(rmse_models.keys())[2] + ' is ' + str(round(list(rmse_models.values())[2])))
+    st.subheader('And the model with the lower RMSE is... {} 🏆'.format(best))
+    st.subheader('Prediction details by model ⬇️')
+
+    # importing plots to streamlit
+    st.plotly_chart(fig, use_container_width=True)
+
+    # python console print check
+    print('All models plotting completed')
+    print()
+
+###################################################################################
+
+# RUN COMPLETED
+
+    st.balloons()

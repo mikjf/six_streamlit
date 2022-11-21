@@ -1,8 +1,13 @@
+# IMPORTS
 import pandas as pd
 import numpy as np
 import scipy
 from datetime import datetime
 from pmdarima.arima import auto_arima
+
+###################################################################################
+
+# CALC_ERROR FUNCTION
 
 def calc_error(y,y_hat,method='MAE', normalized=False):
   # y true values
@@ -18,6 +23,10 @@ def calc_error(y,y_hat,method='MAE', normalized=False):
   else:
     return normalize_error(y,error_metric,normalized)
 
+###################################################################################
+
+# NORMALIZE_ERROR FUNCTION
+
 def normalize_error(y,metric,method):
   # method = avarage, range, iqr
   if method == 'average':
@@ -28,6 +37,10 @@ def normalize_error(y,metric,method):
     metric = metric/scipy.stats.iqr(y)
   return metric
 
+###################################################################################
+
+# RUN_ARIMA_GET_RMSE FUNCTION
+
 def run_arima_get_rmse(merchant, merchant_name, train_test_split = 21, seasonality = 12, D_val =1):
   # merchant is a df created from row of a data frame we read
   # train_test_split - number of months for train
@@ -36,7 +49,7 @@ def run_arima_get_rmse(merchant, merchant_name, train_test_split = 21, seasonali
   merchant = merchant.set_index('Month')
   merchant['month_index'] = merchant.index.month
   
-  #train test split, since arima runs on min 21, we used that for train, and whatever is left for test
+  # train test split, since arima runs on min 21, we used that for train, and whatever is left for test
   train = pd.DataFrame({merchant_name : merchant[merchant_name][:train_test_split].values,
                       'Month' : merchant[merchant_name][:train_test_split].index})
   train = train.set_index('Month')
@@ -78,6 +91,5 @@ def run_arima_get_rmse(merchant, merchant_name, train_test_split = 21, seasonali
                                   exogenous=test[['month_index']])
   
   rmse = calc_error(test[merchant_name].values, fitted,method = 'RMSE')
-  #norm_rmse = calc_error(test[merchant_name].values, fitted.values,method = 'RMSE', normalized = 'range')
   
   return rmse

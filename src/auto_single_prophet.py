@@ -1,26 +1,27 @@
-# Prophet model for time series forecast
+# IMPORTS
 from prophet import Prophet
 
-# Data processing
+# DATA PROCESSING
 import numpy as np
 import pandas as pd
 
-# Visualization
+# VISUALIZATION
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# Removing logging issues
+# REMOVING LOGGING ISSUES
 import logging, sys
 logging.disable(sys.maxsize)
 
-# Model performance evaluation
-#from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error
+###################################################################################
+
+# MODEL PERFORMANCE EVALUATION
+
+###################################################################################
+
+# CALC_ERROR FUNCTION
 
 def calc_error(y,y_hat,method='MAE', normalized=False):
-  # y true values
-  # y_hat predicted
-  # method can be MAE or RMSE
-  # normalized can be False, avarage, range, iqr
   if method == 'MAE':
     error_metric = np.mean((np.abs(y_hat - y)))
   else:
@@ -30,8 +31,11 @@ def calc_error(y,y_hat,method='MAE', normalized=False):
   else:
     return normalize_error(y,error_metric,normalized)
 
+###################################################################################
+
+# NORMALIZE_ERROR FUNCTION
+
 def normalize_error(y,metric,method):
-  # method = avarage, range, iqr
   if method == 'average':
     metric = metric/y.mean()
   elif method == 'range':
@@ -40,17 +44,22 @@ def normalize_error(y,metric,method):
     metric = metric/scipy.stats.iqr(y)
   return metric
 
+###################################################################################
+
+# RUN_PROPHET_GET_RMSE FUNCTION
+
 def run_prophet_get_rmse(merchant, train_test_split = 21):
   # merchant is a df created from row of a data frame we read
   # train_test_split - number of months for train
   
   data = merchant.copy(deep=True)
-# Change variable names
+
+  # change variable names
   my_input = ['ds', 'y'] 
   data.columns = my_input
   data['ds'] = data['ds'].dt.strftime('%Y-%m')
   
-  #train test split, since arima runs on min 21, we used that for train, and whatever is left for test
+  # train test split, since arima runs on min 21, we used that for train, and whatever is left for test
   start_date = data.ds[0]
   end_date = data.ds[len(data.ds)-1]
   train_end_date = data.ds[train_test_split-1]
@@ -60,13 +69,12 @@ def run_prophet_get_rmse(merchant, train_test_split = 21):
   # find best hyperparameters and fit the model
   model = Prophet(interval_width=0.99, seasonality_mode='multiplicative')
   
-  # Fit the model on the training dataset
+  # fit the model on the training dataset
   model.fit(train)
 
   results = model.predict(pd.DataFrame({'ds':test.ds.values}))
   fitted = results.yhat
   
   rmse = calc_error(test.y.values, fitted.values,method = 'RMSE')
-  #norm_rmse = calc_error(test[merchant_name].values, fitted.values,method = 'RMSE', normalized = 'range')
   
   return rmse

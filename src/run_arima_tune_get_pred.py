@@ -1,3 +1,4 @@
+# IMPORTS
 import pandas as pd
 import numpy as np
 import scipy
@@ -5,7 +6,11 @@ from datetime import datetime
 from pmdarima.arima import auto_arima
 from dateutil.relativedelta import relativedelta
 
+###################################################################################
+
+# RUN_ARIMA FUNCTION
 def run_arima(merchant, merchant_name, seasonality = 12, D_val =1, pred_months = 12):
+
   # merchant is a df with month column and transaction column named merchant_name
   merchant = merchant.set_index('Month')
   
@@ -40,7 +45,9 @@ def run_arima(merchant, merchant_name, seasonality = 12, D_val =1, pred_months =
   fitted_df['upper_bound'] = [item[1] for item in fitted_CI]
   fitted_df = fitted_df.set_index('timestamp')
 
-  # 12 month prediction
+  ###################################################################################
+
+  # 12 MONTHS PREDICTION
 
   start_month_for_pred = str(datetime.strptime(str(merchant.index[-1]), '%Y-%m') + relativedelta(months=+1))[:7]
   dates = pd.Series(pd.period_range(start_month_for_pred, freq="M", periods=pred_months))
