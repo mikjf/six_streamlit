@@ -1,16 +1,28 @@
-# SIX Time Series Prediction & Outlier Detection on Anonymised Transaction Dataset
+# SIX Payment Transaction Volumes Forecasting
 
-#### -- Project Status: Active
+#### -- Project Status: [Completed]
 
-## Project Description and Business Case
-In a business driven by the number of transactions, historical volumes provide a solid foundation for setting future revenue expectations, yet overall trends may hide valuable insights through combining opposing signals. Therefore, an informed analysis of merchant level fluctuations is needed to design a reliable forecasting mechanism that could serve the business purpose.
+## Streamlit App Repository
+Our team created a Streamlit App on top of our project on [SIX Payment Transaction Volumes Forecasting](https://github.com/mikjf/six_transaction_volumes_forecasting).
 
 ## Project Goals
-Our goal is to analyse the business context behind the provided dataset, propose a
-methodology for forecasting future transaction levels and eventually develop and evaluate such a solution. The expectation is to be creative and experiment with different statistical models that could serve the purpose while ensuring the suitability from a business perspective standpoint.
+Our project goal was to build a fully automated pipeline to forecast future transactions while analysing the business context behind the provided dataset. For what concerns the Streamlit App, we created it to visually showcase our findings to the audience.
 
-## Milestones
-* Set up a Streamlit App that runs selected models
+### Technologies
+* Python
+* Pandas, Scikit-lean, Numpy, Datetime, Scipy, Plotly, Matplotlib, Seaborn
+* Pmdarima, Prophet, Statsmodels, Multiprocess
+* Streamlit
 
-## Featured Notebooks
-* [XXX](xxx/)
+## Streamlit App
+* [Streamlit App](https://mikjf-six-streamlit-app-srcapp-xhhc83.streamlit.app/)
+* [Mock data](https://github.com/mikjf/six_streamlit_app/blob/main/mock_data/Mock_Time_Series_Merchants_Transactions_Anonymized.csv)
+
+## SIX Payment Transaction Volumes Forecasting Full Project
+* [SIX Payment Transaction Volumes Forecasting](https://github.com/mikjf/six_transaction_volumes_forecasting)
+
+## Contributing Members
+* [Alžbeta Bohiniková](https://github.com/Betka112)
+* [Luis Miguel Rodríguez Sedano](https://github.com/Euphorbix)
+* [Mukund Pondkule](https://github.com/mpondkule)
+* [Michael Flury](https://github.com/mikjf)
