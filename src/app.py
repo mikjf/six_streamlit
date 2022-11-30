@@ -58,7 +58,7 @@ import streamlit as st
 
 # PAGE SETUP
 
-st.set_page_config(page_title="SIX Time Series Prediction", # page title, displayed on the window/tab bar
+st.set_page_config(page_title="Time Series Prediction", # page title, displayed on the window/tab bar
                    page_icon="🚀", # favicon: icon that shows on the window/tab bar (tip: you can use emojis)
                    layout="wide", # use full width of the page
                    #menu_items={'About': "Description of the page."}
