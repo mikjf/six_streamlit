@@ -1,9 +1,9 @@
-# SIX Payment Transaction Volumes Forecasting
+# Payment Transaction Volumes Forecasting Streamlit App
 
 #### -- Project Status: [Completed]
 
 ## Streamlit App Repository
-Our team created a Streamlit App on top of our project on [SIX Payment Transaction Volumes Forecasting](https://github.com/mikjf/six_transaction_volumes_forecasting).
+Our team created a Streamlit App on top of our project on [Payment Transaction Volumes Forecasting](https://github.com/mikjf/transaction_volumes_forecasting).
 
 ## Project Goals
 Our project goal was to build a fully automated pipeline to forecast future transactions while analysing the business context behind the provided dataset. For what concerns the Streamlit App, we created it to visually showcase our findings to the audience.
@@ -15,11 +15,11 @@ Our project goal was to build a fully automated pipeline to forecast future tran
 * Streamlit
 
 ## Streamlit App
-* [Streamlit App](https://mikjf-six-streamlit-app-srcapp-xhhc83.streamlit.app/)
-* [Mock data](https://github.com/mikjf/six_streamlit_app/blob/main/mock_data/Mock_Time_Series_Merchants_Transactions_Anonymized.csv)
+* [Streamlit App](https://mikjf-transaction-volumes-forecasting-streamlit-a-srcapp-vi2baj.streamlit.app/)
+* [Mock data](https://github.com/mikjf/transaction_volumes_forecasting_streamlit_app/blob/main/mock_data/Mock_Time_Series_Merchants_Transactions_Anonymized.csv)
 
-## SIX Payment Transaction Volumes Forecasting Full Project
-* [SIX Payment Transaction Volumes Forecasting](https://github.com/mikjf/six_transaction_volumes_forecasting)
+## Payment Transaction Volumes Forecasting Full Project
+* [Payment Transaction Volumes Forecasting](https://github.com/mikjf/transaction_volumes_forecasting)
 
 ## Contributing Members
 * [Alžbeta Bohiniková](https://github.com/Betka112)
