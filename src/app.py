@@ -69,7 +69,7 @@ st.set_page_config(page_title="Time Series Prediction", # page title, displayed 
 # HEADER AND DISCLAIMER
 
 st.title('Payment Transaction Volumes Forecasting')
-st.write("NOTE: The dataset we worked on had already been anonymised since the start of the project. You can run the streamlit app by uploading the [mock dataset](https://github.com/mikjf/six_streamlit/blob/main/mock_data/Mock_Time_Series_Merchants_Transactions_Anonymized.csv) provided. To know everything about the project itself please refer to this [GitHub](https://github.com/mikjf/six_transaction_volumes_forecasting).")
+st.write("NOTE: The dataset we worked on had already been anonymised since the start of the project. You can run the streamlit app by uploading the [mock dataset](https://github.com/mikjf/transaction_volumes_forecasting_streamlit_app/blob/main/mock_data/Mock_Time_Series_Merchants_Transactions_Anonymized.csv) provided. To know everything about the project itself please refer to this [GitHub](https://github.com/mikjf/transaction_volumes_forecasting).")
 
 ###################################################################################
 
