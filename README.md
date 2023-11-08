@@ -15,7 +15,7 @@ Our project goal was to build a fully automated pipeline to forecast future tran
 * Streamlit
 
 ## Streamlit App
-* [Streamlit App](https://mikjf-transaction-volumes-forecasting-streamlit-a-srcapp-vi2baj.streamlit.app/)
+* [Streamlit App](https://transaction-volumes-forecasting-app-py.streamlit.app/)
 * [Mock data](https://github.com/mikjf/transaction_volumes_forecasting_streamlit_app/blob/main/mock_data/Mock_Time_Series_Merchants_Transactions_Anonymized.csv)
 
 ## Payment Transaction Volumes Forecasting Full Project
