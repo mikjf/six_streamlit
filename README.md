@@ -10,7 +10,7 @@ Our project goal was to build a fully automated pipeline to forecast future tran
 
 ## Technologies
 * Python
-* Pandas, Scikit-lean, Numpy, Datetime, Scipy, Plotly, Matplotlib, Seaborn
+* Pandas, Scikit-learn, Numpy, Datetime, Scipy, Plotly, Matplotlib, Seaborn
 * Pmdarima, Prophet, Statsmodels, Multiprocess
 * Streamlit
 
